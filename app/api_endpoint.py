@@ -1,10 +1,13 @@
 from sanic import Blueprint, json
 from sanic import SanicException
-#from vertexai.preview.vision_models import ImageGenerationModel
-from vertexai.preview.generative_models import GenerationConfig, GenerativeModel
+from app.utils import content_gen
 
 blueprint = Blueprint('apiroot', url_prefix='/api')
 
 @blueprint.get('/')
 async def main_root(request):
-    return json({'testkey': 'testvalue'})
+    if request.args.get('topic'):
+        topic = request.args.get('topic')
+    else:
+        topic = 'Dogs'
+    return json(content_gen(topic))
