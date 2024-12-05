@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 import click
+import os
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './google.json'
+
 from app import app, init_app
 
 init_app(app)
