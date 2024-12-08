@@ -2,7 +2,7 @@ from vertexai.preview.vision_models import ImageGenerationModel
 from vertexai.preview.generative_models import GenerationConfig, GenerativeModel
 import json
 
-imagen_model = ImageGenerationModel.from_pretrained('imagen-3.0-generate-001')
+imagen_model = ImageGenerationModel.from_pretrained('imagen-3.0-fast-generate-001')
 gemini_pro_model = GenerativeModel('gemini-1.5-pro-002')
 
 
@@ -29,3 +29,16 @@ def content_gen(topic):
                                                 stream=False
                                                 )
     return json.loads(content.text)
+
+
+def image_gen(prompt, aspect_ratio='16:9'):
+    response = imagen_model.generate_images(
+        prompt=prompt,
+        language='en',
+        guidance_scale=98.5,
+        add_watermark=False,
+        number_of_images=1,
+        aspect_ratio=aspect_ratio
+    )
+    
+    return response.images
