@@ -1,8 +1,33 @@
-<html>
-    <head>
+{% extends "base.html" %}
 
-    </head>
-    <body>
-        <h1>Hello, This is IMAGE GENERATOR</h1>
-    </body>
-</html>
+
+{% block head_js %}
+<script>
+    async function get_prompts(topic) {
+        let x = await $.ajax('/api/?topic=' + topic);
+        return x
+    }
+
+    function gen_prompts() {
+        let topic = $("#main_topic").val();
+        Promise.all([get_prompts(topic)]).then(prompt_list => {
+            y = prompt_list[0];
+            for (let i = 0; i <= y.length; i++) {
+                $("#p"+i.toString()).val(y[i].prompt);
+            }
+        }
+        );
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+
+<textarea rows="4" cols="50" name="comment" form="usrform" id="main_topic">Enter text here...</textarea>
+<button id="get_prompts" onclick="gen_prompts()">Generate Prompts</button>
+<br />
+<textarea rows="4" cols="50" name="comment" form="usrform" id="p0">Your Prompt will be here</textarea>
+<textarea rows="4" cols="50" name="comment" form="usrform" id="p1">Your Prompt will be here</textarea>
+<textarea rows="4" cols="50" name="comment" form="usrform" id="p2">Your Prompt will be here</textarea>
+<textarea rows="4" cols="50" name="comment" form="usrform" id="p3">Your Prompt will be here</textarea>
+{% endblock %}

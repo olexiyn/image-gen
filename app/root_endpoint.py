@@ -7,3 +7,8 @@ blueprint = Blueprint('imgroot', url_prefix='/')
 @blueprint.get('/')
 async def main_root(request):
     return await render("index.html", context={}, status=200)
+
+
+@blueprint.get('/image-gen')
+async def image_gen_root(request):
+    return await render("imggen.html", context={}, status=200)

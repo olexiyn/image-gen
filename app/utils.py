@@ -7,7 +7,7 @@ gemini_pro_model = GenerativeModel('gemini-1.5-pro-002')
 
 
 def content_gen(topic):
-    prompt_text = f"Create 3 High-Quality Image Prompts to generate photos on given topic: {topic}"
+    prompt_text = f"Create 4 High-Quality Image Prompts to generate photos on given topic: {topic}"
     response_schema = {
         "type": "array",
         "items": {
