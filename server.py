@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 import click
 import os
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = './google.json'
+from pathlib import Path
 
+env_file = f'{Path(__file__).absolute().parent}/.env'
+from dotenv import load_dotenv
+load_dotenv(dotenv_path=env_file)
 from app import app, init_app
 
 init_app(app)

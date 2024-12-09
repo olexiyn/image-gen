@@ -18,16 +18,37 @@
         }
         );
     }
+
+    async function get_images(prompt) {
+        let x = await $.ajax('/api/?topic=' + prompt);
+        return x
+    }
+
+    function gen_images() {
+        for (let i = 0; i <= 3; i++) {
+            let prompt = ("#p"+i.toString()).val(y[i].prompt);
+        }
+    }
 </script>
 {% endblock %}
 
 {% block content %}
 
 <textarea rows="4" cols="50" name="comment" form="usrform" id="main_topic">Enter text here...</textarea>
+<br />
 <button id="get_prompts" onclick="gen_prompts()">Generate Prompts</button>
 <br />
 <textarea rows="4" cols="50" name="comment" form="usrform" id="p0">Your Prompt will be here</textarea>
 <textarea rows="4" cols="50" name="comment" form="usrform" id="p1">Your Prompt will be here</textarea>
+<br />
 <textarea rows="4" cols="50" name="comment" form="usrform" id="p2">Your Prompt will be here</textarea>
 <textarea rows="4" cols="50" name="comment" form="usrform" id="p3">Your Prompt will be here</textarea>
+<br />
+<button id="get_prompts" onclick="gen_prompts()">Generate Images</button>
+<br />
+<img id="img0" src="" width="400">
+<img id="img1" src="" width="400">
+<br />
+<img id="img2" src="" width="400">
+<img id="img3" src="" width="400">
 {% endblock %}
