@@ -1,7 +1,10 @@
 from sanic import Blueprint, json, raw
 from sanic import SanicException
 from app.utils import content_gen, image_gen
+import random
+import string
 from io import BytesIO
+import boto3
 
 blueprint = Blueprint('apiroot', url_prefix='/api')
 
@@ -40,10 +43,21 @@ async def img_gen_url(request):
     s3_endpoint = request.app.config.get('S3_ENDPOINT')
     s3_access_key = request.app.config.get('S3_ACCESS_KEY')
     s3_secret_key = request.app.config.get('S3_SECRET_KEY')
+    s3_bucket_name = request.app.config.get('S3_BUCKET_NAME')
+    s3_image_storage_url = request.app.config.get('S3_IMAGE_STORAGE_URL')
     img = image_gen(prompt)
     if not img:
         return json({'error': 'no images generated'})
     temp_png = BytesIO()
     img[0]._pil_image.save(temp_png, format='PNG')
-    return raw(content_type='image/png', body=temp_png.getvalue())
+    s3 = boto3.client(
+        's3',
+        aws_access_key_id=s3_access_key,
+        aws_secret_access_key=s3_secret_key,
+        endpoint_url=s3_endpoint,
+        region_name='auto'
+    )
+    s3_file_name = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))+".png"
+    s3.put_object(Body=temp_png.getvalue(), Bucket=s3_bucket_name, Key=s3_file_name, ContentType='image/png')
+    url = f"{s3_image_storage_url}/{s3_file_name}"
     return json({'url': url})

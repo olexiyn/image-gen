@@ -9,46 +9,77 @@
     }
 
     function gen_prompts() {
+        $("#get_prompts_button").attr('value', "Loading...");
+        //$("#get_prompts_button").prop("disabled", true);
+        //document.getElementById('get_prompts_button').disabled = true;
+        
         let topic = $("#main_topic").val();
         Promise.all([get_prompts(topic)]).then(prompt_list => {
             y = prompt_list[0];
             for (let i = 0; i <= y.length; i++) {
                 $("#p"+i.toString()).val(y[i].prompt);
             }
+            //document.getElementById('get_prompts_button').disabled = false;
+            
         }
         );
+        //$("#get_prompts_button").prop("disabled", false);
+        $("#get_prompts_button").attr('value', "Generate Prompts");
+        $("#get_prompts_button").prop("disabled", false);
+        
     }
 
     async function get_images(prompt) {
-        let x = await $.ajax('/api/?topic=' + prompt);
+        let x = await $.ajax('/api/imggen-url?prompt=' + prompt);
         return x
     }
 
     function gen_images() {
+        $("#get_images_button").prop("disabled", true);
+        $("#get_images_button").val("Loading...");
+
+        let arr = [];
         for (let i = 0; i <= 3; i++) {
-            let prompt = ("#p"+i.toString()).val(y[i].prompt);
+            let prompt = $("#p"+i.toString()).val();
+            arr.push(get_images(prompt));
         }
+        Promise.all(arr).then(url_list => {
+            for (let i = 0; i <= url_list.length; i++) {
+                $("#img"+i.toString()).attr("src", url_list[i].url);
+            }
+        }
+        );
+        $("#get_images_button").prop("disabled", false);
+        $("#get_images_button").val("Generate Images");
+
     }
 </script>
 {% endblock %}
 
 {% block content %}
 
-<textarea rows="4" cols="50" name="comment" form="usrform" id="main_topic">Enter text here...</textarea>
+<textarea rows="4" cols="50" name="comment" form="usrform" id="main_topic" class="ui-widget ui-corner-all">Enter text here...</textarea>
 <br />
-<button id="get_prompts" onclick="gen_prompts()">Generate Prompts</button>
+<input type="button" id="get_prompts_button" value="Generate Prompts" />
 <br />
-<textarea rows="4" cols="50" name="comment" form="usrform" id="p0">Your Prompt will be here</textarea>
-<textarea rows="4" cols="50" name="comment" form="usrform" id="p1">Your Prompt will be here</textarea>
+<textarea rows="4" cols="50" name="comment" form="usrform" id="p0" class="ui-widget ui-corner-all">Your Prompt will be here</textarea>
+<textarea rows="4" cols="50" name="comment" form="usrform" id="p1" class="ui-widget ui-corner-all">Your Prompt will be here</textarea>
 <br />
-<textarea rows="4" cols="50" name="comment" form="usrform" id="p2">Your Prompt will be here</textarea>
-<textarea rows="4" cols="50" name="comment" form="usrform" id="p3">Your Prompt will be here</textarea>
+<textarea rows="4" cols="50" name="comment" form="usrform" id="p2" class="ui-widget ui-corner-all">Your Prompt will be here</textarea>
+<textarea rows="4" cols="50" name="comment" form="usrform" id="p3" class="ui-widget ui-corner-all">Your Prompt will be here</textarea>
 <br />
-<button id="get_prompts" onclick="gen_prompts()">Generate Images</button>
+<input type="button" id="get_images_button" onclick="gen_images()" value="Generate Images" />
 <br />
-<img id="img0" src="" width="400">
-<img id="img1" src="" width="400">
+<img id="img0" src="" width="400" />
+<img id="img1" src="" width="400" />
 <br />
-<img id="img2" src="" width="400">
-<img id="img3" src="" width="400">
+<img id="img2" src="" width="400" />
+<img id="img3" src="" width="400" />
+
+<script> 
+    $(document).ready(function() {
+        document.getElementById('get_prompts_button').addEventListener("click", function(){$("#get_prompts_button").prop("disabled", true); setTimeout(function(){gen_prompts()}, 200)}, false);
+        document.getElementById('get_images_button').addEventListener("click", gen_images);
+    }); 
+</script>
 {% endblock %}
