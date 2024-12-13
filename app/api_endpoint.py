@@ -15,7 +15,8 @@ async def main_root(request):
         topic = request.args.get('topic')
     else:
         topic = 'Dogs'
-    return json(content_gen(topic))
+    json_prompts = await content_gen(topic)
+    return json(json_prompts)
 
 
 @blueprint.get('/imggen', name='img_gen')

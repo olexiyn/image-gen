@@ -6,7 +6,7 @@ imagen_model = ImageGenerationModel.from_pretrained('imagen-3.0-fast-generate-00
 gemini_pro_model = GenerativeModel('gemini-1.5-pro-002')
 
 
-def content_gen(topic):
+async def content_gen(topic):
     prompt_text = f"Create 4 High-Quality Image Prompts to generate photos on given topic: {topic}"
     response_schema = {
         "type": "array",
@@ -21,7 +21,7 @@ def content_gen(topic):
         },
     }
 
-    content = gemini_pro_model.generate_content(prompt_text,
+    content = await gemini_pro_model.generate_content_async(prompt_text,
                                                 generation_config=GenerationConfig(
                                                     response_mime_type="application/json",
                                                     response_schema=response_schema
