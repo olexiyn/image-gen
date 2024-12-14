@@ -39,12 +39,17 @@
         $("#get_images_button").val("Loading...");
 
         let arr = [];
+        console.log('1');
         for (let i = 0; i <= 3; i++) {
             let prompt = $("#p"+i.toString()).val();
+            console.log('2');
             arr.push(get_images(prompt));
         }
+        console.log(3);
         Promise.all(arr).then(url_list => {
+            //console.log(url_list);
             for (let i = 0; i <= url_list.length; i++) {
+                console.log(url_list[i]);
                 $("#img"+i.toString()).attr("src", url_list[i].url);
             }
         }
@@ -68,7 +73,7 @@
 <textarea rows="4" cols="50" name="comment" form="usrform" id="p2" class="ui-widget ui-corner-all">Your Prompt will be here</textarea>
 <textarea rows="4" cols="50" name="comment" form="usrform" id="p3" class="ui-widget ui-corner-all">Your Prompt will be here</textarea>
 <br />
-<input type="button" id="get_images_button" onclick="gen_images()" value="Generate Images" />
+<input type="button" id="get_images_button" value="Generate Images" />
 <br />
 <img id="img0" src="" width="400" />
 <img id="img1" src="" width="400" />
