@@ -44,6 +44,7 @@ rsa==4.9
 s3transfer==0.10.4
 sanic==24.6.0
 sanic-ext==23.12.0
+Sanic-HTTPAuth==0.2.0
 sanic-routing==23.12.0
 setuptools==75.6.0
 shapely==2.0.6

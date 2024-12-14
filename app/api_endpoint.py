@@ -1,4 +1,4 @@
-from sanic import Blueprint, json, raw
+from sanic import Blueprint, Sanic, json, raw
 from sanic import SanicException
 from app.utils import content_gen, image_gen
 import random
@@ -6,10 +6,13 @@ import string
 from io import BytesIO
 import boto3
 
+my_app = Sanic.get_app()
+my_auth = my_app.config.BASIC_AUTH
 blueprint = Blueprint('apiroot', url_prefix='/api')
 
 
 @blueprint.get('/', name='apiroot_dogs')
+@my_auth.login_required
 async def main_root(request):
     if request.args.get('topic'):
         topic = request.args.get('topic')
@@ -20,6 +23,7 @@ async def main_root(request):
 
 
 @blueprint.get('/imggen', name='img_gen')
+@my_auth.login_required
 async def img_gen(request):
     if request.args.get('prompt'):
         prompt = request.args.get('prompt')
@@ -35,6 +39,7 @@ async def img_gen(request):
 
 
 @blueprint.get('/imggen-url', name='img_gen_url')
+@my_auth.login_required
 async def img_gen_url(request):
     if request.args.get('prompt'):
         prompt = request.args.get('prompt')
