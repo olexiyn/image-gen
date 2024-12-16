@@ -26,16 +26,21 @@
         return x
     }
 
+    async function update_image(id, prompt){
+        let img_obj = await get_images(prompt);
+        $("#img" + id.toString()).attr("src", img_obj.url);
+    }
+
     function gen_images() {
         let arr = [];
         for (let i = 0; i <= 3; i++) {
             let prompt = $("#p" + i.toString()).val();
-            arr.push(get_images(prompt));
+            arr.push(update_image(i, prompt));
         }
         Promise.all(arr).then(url_list => {
-            for (let i = 0; i < url_list.length; i++) {
-                $("#img" + i.toString()).attr("src", url_list[i].url);
-            }
+            // for (let i = 0; i < url_list.length; i++) {
+            //     $("#img" + i.toString()).attr("src", url_list[i].url);
+            // }
             $("#get_images_button").prop("disabled", false);
             $("#get_images_button").val("Generate Images");
         }
