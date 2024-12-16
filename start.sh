@@ -1,13 +1,8 @@
 #!/bin/sh
 echo 'starting'
 
-echo "STARTED00000000"
-
-printenv GOOGLE_JSON
-echo "11111"
+#printenv GOOGLE_JSON
 printenv GOOGLE_JSON > /opt/google.json
-echo "22222"
-cat /opt/google.json
 
 chmod 644 /opt/google.json
 

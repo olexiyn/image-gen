@@ -4,7 +4,7 @@
 {% block head_js %}
 <script>
     async function get_prompts(topic) {
-        let x = await $.ajax('/api/?topic=' + topic);
+        let x = await $.ajax({'url': '/api', data: {'topic': topic}});
         return x
     }
 
@@ -21,21 +21,25 @@
         );
     }
 
-    async function get_images(prompt) {
-        let x = await $.ajax('/api/imggen-url?prompt=' + prompt);
+    async function get_images(prompt, aspect_ratio) {
+        let x = await $.ajax({'url': '/api/imggen-url', data: {'prompt': prompt, 'aspect_ratio': aspect_ratio}});
         return x
     }
 
-    async function update_image(id, prompt){
-        let img_obj = await get_images(prompt);
+    async function update_image(id, prompt, aspect_ratio){
+        let img_obj = await get_images(prompt, aspect_ratio);
         $("#img" + id.toString()).attr("src", img_obj.url);
+        $("#img" + id.toString() + "_download").attr("href", img_obj.url);
+        $("#img" + id.toString() + "_download_2x").attr("href", "/api/upscale?scale=2&url="+img_obj.url);
+        $("#img" + id.toString() + "_download_4x").attr("href", "/api/upscale?scale=4&url="+img_obj.url);
     }
 
     function gen_images() {
         let arr = [];
         for (let i = 0; i <= 3; i++) {
             let prompt = $("#p" + i.toString()).val();
-            arr.push(update_image(i, prompt));
+            let aspect_ratio = $("input[name='aspect_ratio']:checked").val();
+            arr.push(update_image(i, prompt, aspect_ratio));
         }
         Promise.all(arr).then(url_list => {
             // for (let i = 0; i < url_list.length; i++) {
@@ -66,13 +70,62 @@
 <textarea rows="4" cols="50" name="comment" form="usrform" id="p3"
     class="ui-widget ui-corner-all">Your Prompt will be here</textarea>
 <br />
+<!-- "1:1", "9:16", "16:9", "4:3", "3:4" -->
+ <fieldset style="width: 816px;">
+    <legend>Select aspect ratio</legend>
+    <div>
+        <input type="radio" id="1_to_1" name="aspect_ratio" value="1:1">
+        <label>1:1</label>
+        <input type="radio" id="9_to_16" name="aspect_ratio" value="9:16">
+        <label>9:16</label>
+        <input type="radio" id="16_to_9" name="aspect_ratio" value="16:9" checked>
+        <label>16:9</label>
+        <input type="radio" id="4_to_3" name="aspect_ratio" value="4:3">
+        <label>4:3</label>
+        <input type="radio" id="3_to_4" name="aspect_ratio" value="3:4">
+        <label>3:4</label>
+    </div>
+ </fieldset>
 <input type="button" id="get_images_button" value="Generate Images" />
-<br />
-<img id="img0" src="" width="400" />
-<img id="img1" src="" width="400" />
-<br />
-<img id="img2" src="" width="400" />
-<img id="img3" src="" width="400" />
+<hr />
+<table>
+    <tr>
+        <td><img id="img0" src="https://img.imagegenstages.com/img/rw57nkvk.png" width="400" /></td>
+        <td>
+            <a target="_blank" rel="noopener noreferrer" href="#" id="img0_download" download><input type="button" value="Download"></a>
+            <br/>
+            <a target="_blank" rel="noopener noreferrer" href="#" id="img0_download_2x" download><input type="button" value="Download 2X"></a>
+            <br/>
+            <a target="_blank" rel="noopener noreferrer" href="#" id="img0_download_4x" download><input type="button" value="Download 4X"></a>
+        </td>
+        <td><img id="img1" src="https://img.imagegenstages.com/img/rw57nkvk.png" width="400" /></td>
+        <td>
+            <a target="_blank" rel="noopener noreferrer" href="#" id="img1_download" download><input type="button" value="Download"></a>
+            <br/>
+            <a target="_blank" rel="noopener noreferrer" href="#" id="img1_download_2x" download><input type="button" value="Download 2X"></a>
+            <br/>
+            <a target="_blank" rel="noopener noreferrer" href="#" id="img1_download_4x" download><input type="button" value="Download 4X"></a>
+        </td>
+    </tr>
+    <tr>
+        <td><img id="img2" src="https://img.imagegenstages.com/img/rw57nkvk.png" width="400" /></td>
+        <td>
+            <a target="_blank" rel="noopener noreferrer" href="#" id="img2_download" download><input type="button" value="Download"></a>
+            <br/>
+            <a target="_blank" rel="noopener noreferrer" href="#" id="img2_download_2x" download><input type="button" value="Download 2X"></a>
+            <br/>
+            <a target="_blank" rel="noopener noreferrer" href="#" id="img2_download_4x" download><input type="button" value="Download 4X"></a>
+        </td>
+        <td><img id="img3" src="https://img.imagegenstages.com/img/rw57nkvk.png" width="400" /></td>
+        <td>
+            <a target="_blank" rel="noopener noreferrer" href="#" id="img3_download" download><input type="button" value="Download"></a>
+            <br/>
+            <a target="_blank" rel="noopener noreferrer" href="#" id="img3_download_2x" download><input type="button" value="Download 2X"></a>
+            <br/>
+            <a target="_blank" rel="noopener noreferrer" href="#" id="img3_download_4x" download><input type="button" value="Download 4X"></a>
+        </td>
+    </tr>
+</table>
 
 <script>
     $(document).ready(function () {

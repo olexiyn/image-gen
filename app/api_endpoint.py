@@ -1,10 +1,11 @@
-from sanic import Blueprint, Sanic, json, raw
+from sanic import Blueprint, Sanic, json, raw, redirect
 from sanic import SanicException
-from app.utils import content_gen, image_gen, upscale, save_in_cloud
+from app.utils import content_gen, image_gen, upscale, save_in_cloud, get_image_from_url
 import random
 import string
 from io import BytesIO
 import boto3
+import httpx
 
 my_app = Sanic.get_app()
 my_auth = my_app.config.BASIC_AUTH
@@ -41,13 +42,14 @@ async def img_gen(request):
 @blueprint.get('/imggen-url', name='img_gen_url')
 @my_auth.login_required
 async def img_gen_url(request):
+    aspect_ratio = '16:9'
     if request.args.get('prompt'):
         prompt = request.args.get('prompt')
-        print(prompt)
+        aspect_ratio = request.args.get('aspect_ratio')
     else:
         prompt = 'Cats'
-        
-    img = image_gen(prompt)
+
+    img = await image_gen(prompt, aspect_ratio)
     if not img:
         return json({'error': 'no images generated'})
     temp_png = BytesIO()
@@ -58,7 +60,14 @@ async def img_gen_url(request):
 @blueprint.get('/upscale', name='img_upscale')
 @my_auth.login_required
 async def img_upscale(request):
-    imaage_url = request.args.get('url')
+    image_url = request.args.get('url')
     scale = request.args.get('scale')
-    result = await upscale(image_url=imaage_url, scale=scale)
-    return json(result)
+    result = await upscale(image_url=image_url, scale=scale)
+    print(result)
+    img = await get_image_from_url(result['result_url'])
+    if result['result_url'].endswith('.png'):
+        image_type = 'png'
+    else:
+        image_type = 'jpeg'
+    result_url = await save_in_cloud(img, image_type)
+    return redirect(result_url)
