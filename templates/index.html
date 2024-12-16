@@ -30,8 +30,8 @@
         let img_obj = await get_images(prompt, aspect_ratio, model);
         $("#img" + id.toString()).attr("src", img_obj.url);
         $("#img" + id.toString() + "_download").attr("href", img_obj.url);
-        $("#img" + id.toString() + "_download_2x").attr("href", "/api/upscale?scale=2&url="+img_obj.url);
-        $("#img" + id.toString() + "_download_4x").attr("href", "/api/upscale?scale=4&url="+img_obj.url);
+        $("#img" + id.toString() + "_download_2x").attr("href", "/api/upscale?scale=2&url="+encodeURIComponent(img_obj.url));
+        $("#img" + id.toString() + "_download_4x").attr("href", "/api/upscale?scale=4&url="+encodeURIComponent(img_obj.url));
     }
 
     function gen_images() {

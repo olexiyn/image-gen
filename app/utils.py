@@ -76,7 +76,7 @@ async def upscale(image_url, scale):
                }
     data = {'image_url': image_url, 'scale': scale}
     async with httpx.AsyncClient() as client:
-        result = await client.post(url, headers=headers, json=data)
+        result = await client.post(url, headers=headers, json=data, timeout=90.0)
     return result.json()
 
 
@@ -105,5 +105,5 @@ async def save_in_cloud(upload_data, image_type):
 
 async def get_image_from_url(url):
     async with httpx.AsyncClient() as client:
-        result = await client.get(url)
+        result = await client.get(url, timeout=90.0)
     return result.content
