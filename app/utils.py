@@ -8,8 +8,10 @@ import aioboto3
 import random
 import string
 
-imagen_model = ImageGenerationModel.from_pretrained(
+imagen_fast_model = ImageGenerationModel.from_pretrained(
     'imagen-3.0-fast-generate-001')
+imagen_quality_model = ImageGenerationModel.from_pretrained(
+    'imagen-3.0-generate-001')
 gemini_pro_model = GenerativeModel('gemini-1.5-pro-002')
 
 myapp = Sanic.get_app()
@@ -48,7 +50,11 @@ async def content_gen(topic):
     return json.loads(content.text)
 
 
-async def image_gen(prompt, aspect_ratio='16:9'):
+async def image_gen(prompt, aspect_ratio='16:9', model='fast'):
+    if model == 'quality':
+        imagen_model = imagen_quality_model
+    else:
+        imagen_model = imagen_fast_model
     response = imagen_model.generate_images(
         prompt=prompt,
         language='en',

@@ -21,13 +21,13 @@
         );
     }
 
-    async function get_images(prompt, aspect_ratio) {
-        let x = await $.ajax({'url': '/api/imggen-url', data: {'prompt': prompt, 'aspect_ratio': aspect_ratio}});
+    async function get_images(prompt, aspect_ratio, model) {
+        let x = await $.ajax({'url': '/api/imggen-url', data: {'prompt': prompt, 'aspect_ratio': aspect_ratio, 'model': model}});
         return x
     }
 
-    async function update_image(id, prompt, aspect_ratio){
-        let img_obj = await get_images(prompt, aspect_ratio);
+    async function update_image(id, prompt, aspect_ratio, model){
+        let img_obj = await get_images(prompt, aspect_ratio, model);
         $("#img" + id.toString()).attr("src", img_obj.url);
         $("#img" + id.toString() + "_download").attr("href", img_obj.url);
         $("#img" + id.toString() + "_download_2x").attr("href", "/api/upscale?scale=2&url="+img_obj.url);
@@ -39,7 +39,8 @@
         for (let i = 0; i <= 3; i++) {
             let prompt = $("#p" + i.toString()).val();
             let aspect_ratio = $("input[name='aspect_ratio']:checked").val();
-            arr.push(update_image(i, prompt, aspect_ratio));
+            let model = $("#model").val();
+            arr.push(update_image(i, prompt, aspect_ratio, model));
         }
         Promise.all(arr).then(url_list => {
             // for (let i = 0; i < url_list.length; i++) {
@@ -72,7 +73,7 @@
 <br />
 <!-- "1:1", "9:16", "16:9", "4:3", "3:4" -->
  <fieldset style="width: 816px;">
-    <legend>Select aspect ratio</legend>
+    <legend>Select Aspect Ratio and Model</legend>
     <div>
         <input type="radio" id="1_to_1" name="aspect_ratio" value="1:1">
         <label>1:1</label>
@@ -84,6 +85,10 @@
         <label>4:3</label>
         <input type="radio" id="3_to_4" name="aspect_ratio" value="3:4">
         <label>3:4</label>
+        <select id="model" style="margin-left: 20px;">
+            <option value="fast" selected>Generation Model: Fast (5-15 sec)</option>
+            <option value="quality">Generation Model: High Quality (30-45 sec)</option>
+        </select>
     </div>
  </fieldset>
 <input type="button" id="get_images_button" value="Generate Images" />

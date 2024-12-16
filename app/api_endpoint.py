@@ -43,13 +43,15 @@ async def img_gen(request):
 @my_auth.login_required
 async def img_gen_url(request):
     aspect_ratio = '16:9'
+    model = 'fast'
     if request.args.get('prompt'):
         prompt = request.args.get('prompt')
         aspect_ratio = request.args.get('aspect_ratio')
+        model = request.args.get('model')
     else:
         prompt = 'Cats'
 
-    img = await image_gen(prompt, aspect_ratio)
+    img = await image_gen(prompt, aspect_ratio, model)
     if not img:
         return json({'error': 'no images generated'})
     temp_png = BytesIO()
